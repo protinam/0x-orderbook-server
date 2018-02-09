@@ -1,0 +1,9 @@
+{
+  "name": "0x-orderbook",
+  "version": "0.1.0",
+  "description": "Open-source 0x orderbook server, written for ForkDelta.",
+  "main": "index.js",
+  "repository": "https://github.com/protinam/0x-orderbook-server.git",
+  "author": "Protinam <protinam@protonmail.ch>",
+  "license": "MIT"
+}
