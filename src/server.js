@@ -39,6 +39,9 @@ const paged = (func) => {
 const go = (config) => {
   const { sequelize, Op, Order, orderToJSON, orderFromJSON } = db(config.sequelize)
 
+  const price = sequelize.fn('div', sequelize.col('takerTokenAmount'), sequelize.col('makerTokenAmount'))
+  const totalFees = sequelize.fn('add', sequelize.col('makerFee'), sequelize.col('takerFee'))
+
   const app = express()
   app.use(bodyParser.json())
   if (config.production) {
@@ -64,7 +67,7 @@ const go = (config) => {
       query.where.takerTokenAddress = req.query.takerTokenAddress
     }
     if (req.query.makerTokenAddress && req.query.takerTokenAddress) {
-      query.order = sequelize.literal('(takerTokenAmount / makerTokenAmount) ASC (makerFee + takerFee) ASC expirationUnixTimestampSec ASC')
+      query.order = [[price, 'ASC'], [totalFees, 'ASC'], ['expirationUnixTimestampSec', 'ASC']]
     }
     if (req.query.tokenAddress) {
       query.where[Op.or] = [{makerTokenAddress: req.query.tokenAddress, takerTokenAddress: req.query.tokenAddress}]
@@ -99,13 +102,13 @@ const go = (config) => {
     const quoteTokenAddress = req.query.quoteTokenAddress
     const bidQuery = {
       where: {makerTokenAddress: baseTokenAddress, takerTokenAddress: quoteTokenAddress},
-      order: sequelize.literal('(takerTokenAmount / makerTokenAmount) DESC (makerFee + takerFee) ASC expirationUnixTimestampSec ASC'),
+      order: [[price, 'DESC'], [totalFees, 'ASC'], ['expirationUnixTimestampSec', 'ASC']],
       limit,
       offset
     }
     const askQuery = {
       where: {makerTokenAddress: quoteTokenAddress, takerTokenAddress: baseTokenAddress},
-      order: sequelize.literal('(takerTokenAmount / makerTokenAmount) ASC (makerFee + takerFee) ASC expirationUnixTimestampSec ASC'),
+      order: [[price, 'ASC'], [totalFees, 'ASC'], ['expirationUnixTimestampSec', 'ASC']],
       limit,
       offset
     }
@@ -132,7 +135,7 @@ const go = (config) => {
     })
   }))
 
-  app.use('v0', router)
+  app.use('/v0', router)
 
   sequelize
     .sync()
@@ -144,6 +147,4 @@ const go = (config) => {
     })
 }
 
-module.exports = {
-  go: go
-}
+module.exports = { go }

@@ -1,5 +1,5 @@
 {
-  "name": "0x-orderbook",
+  "name": "0x-orderbook-server",
   "version": "0.1.0",
   "description": "Open-source 0x orderbook server, written for ForkDelta.",
   "main": "index.js",

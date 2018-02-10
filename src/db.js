@@ -4,6 +4,11 @@ const { ZeroEx } = require('0x.js')
 module.exports = (config) => {
   const sequelize = new Sequelize(config.database, config.username, config.password, config)
 
+  sequelize.query('CREATE OR REPLACE FUNCTION add(text, text) RETURNS integer AS \'select ($1::integer) + ($2::integer);\' LANGUAGE SQL IMMUTABLE RETURNS NULL ON NULL INPUT')
+  sequelize.query('CREATE OR REPLACE FUNCTION sub(text, text) RETURNS integer AS \'select ($1::integer) - ($2::integer);\' LANGUAGE SQL IMMUTABLE RETURNS NULL ON NULL INPUT')
+  sequelize.query('CREATE OR REPLACE FUNCTION div(text, text) RETURNS integer AS \'select ($1::integer) / ($2::integer);\' LANGUAGE SQL IMMUTABLE RETURNS NULL ON NULL INPUT')
+  sequelize.query('CREATE OR REPLACE FUNCTION mul(text, text) RETURNS integer AS \'select ($1::integer) * ($2::integer);\' LANGUAGE SQL IMMUTABLE RETURNS NULL ON NULL INPUT')
+
   const Order = sequelize.define('order', {
     hash: {type: Sequelize.TEXT, allowNull: false, primaryKey: true},
     exchangeContractAddress: {type: Sequelize.TEXT, allowNull: false},
