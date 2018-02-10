@@ -6,9 +6,15 @@
 
 Open-source 0x orderbook server, written for ForkDelta.
 
-Three-tier: [Varnish](https://varnish-cache.org/) in front, Node HTTP server, PostgreSQL backing datastore.
+Three-tier: [Varnish](https://varnish-cache.org/) in front (not yet implemented), Node HTTP server, PostgreSQL backing datastore.
 
 ### Operation
+
+Copy [config.example.js](config/config.example.js) to `config/config.js`, edit to suit your requirements, then simply run:
+
+```bash
+node index.js
+```
 
 ### Development Information
 
